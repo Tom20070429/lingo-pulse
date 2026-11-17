@@ -1,0 +1,10 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const site = path.join(root, 'site');
+await fs.rm(site, { recursive: true, force: true });
+await fs.mkdir(path.join(site, 'data'), { recursive: true });
+for (const file of ['index.html', 'app.js', 'styles.css']) await fs.copyFile(path.join(root, file), path.join(site, file));
+await fs.copyFile(path.join(root, 'data', 'terms.json'), path.join(site, 'data', 'terms.json'));
+console.log('静态网站已生成到 site/');

@@ -1,0 +1,43 @@
+name: Update Lingo Pulse
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 下载仓库
+        uses: actions/checkout@v4
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 更新候选词条
+        run: npm run update
+      - name: 保存词库改动
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/terms.json
+          git diff --cached --quiet || git commit -m "chore: update internet slang dictionary"
+          git push
+      - name: 生成静态网站
+        run: npm run build
+      - name: 上传 Pages 文件
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: 发布到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

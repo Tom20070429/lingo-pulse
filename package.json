@@ -1,0 +1,7 @@
+{
+  "name": "lingo-pulse",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "start": "node server.js", "update": "node scripts/update-terms.mjs", "build": "node scripts/build-site.mjs" }
+}
