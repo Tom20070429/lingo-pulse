@@ -25,6 +25,12 @@ jobs:
           node-version: 20
       - name: 更新候选词条
         run: npm run update
+      - name: 显示更新结果
+        if: always()
+        run: |
+          echo "### 词库自动更新结果" >> "$GITHUB_STEP_SUMMARY"
+          echo "请查看上方‘更新候选词条’日志中的来源状态与 discovered 数字。" >> "$GITHUB_STEP_SUMMARY"
+          echo "discovered 大于 0 表示有新候选词写入；为 0 表示来源无可用释义或外部平台暂时不可访问。" >> "$GITHUB_STEP_SUMMARY"
       - name: 保存词库改动
         run: |
           git config user.name "github-actions[bot]"
@@ -41,3 +47,4 @@ jobs:
       - name: 发布到 GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
